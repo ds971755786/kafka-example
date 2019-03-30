@@ -1,0 +1,29 @@
+# Please use command below to build the image:
+# docker build -f Dockerfile -t <image_name>:<version> .
+
+ARG ARG_VERSION=0.1
+ARG ARG_PREFIX=10.19.140.200:29006/tools
+FROM ${ARG_PREFIX}/he2-centos7-jdk8:${ARG_VERSION}
+
+ARG ARG_KAFKA_VERSION=2.1.0
+ARG ARG_SCALA_VERSION=2.11
+
+# KAFKA
+ENV KAFKA_VERSION ${ARG_KAFKA_VERSION}
+ENV SCALA_VERSION ${ARG_SCALA_VERSION}
+ENV KAFKA_PACKAGE=kafka_${SCALA_VERSION}-${KAFKA_VERSION}
+
+# Download Apache Kafka, untar and clean up
+RUN set -x && \
+    curl -L -C - "http://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_PACKAGE}.tgz" | \
+         tar -xz -C /opt && \
+    cd /opt && \
+    ln -s $KAFKA_PACKAGE kafka
+
+ENV KAFKA_HOME /opt/kafka
+ENV PATH $PATH:${KAFKA_HOME}/bin
+ENV KAFKA_CONF_DIR $KAFKA_HOME/config
+
+WORKDIR /opt
+
+ENTRYPOINT ["tail", "-f", "/var/log/lastlog"]
