@@ -2,11 +2,11 @@ package io.dongsheng.sink;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
-import org.apache.hadoop.util.Progressable;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.sink.SinkRecord;
@@ -25,18 +25,6 @@ import static io.dongsheng.sink.HdfsSinkConnector.*;
 
 public class HdfsSinkTask extends SinkTask {
     /**
-     *        "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-     *         "topics.dir": "/connector/topics",
-     *         "flush.size": "16",
-     *         "tasks.max": "1",
-     *         "topics": "hdfs-sink-stress",
-     *         "hdfs.url": "hdfs://etyb-namenode2.spider:8020",
-     *         "logs.dir": "/connector/logs",
-     *
-     *         Configuration configuration = new Configuration();
-     * FileSystem hdfs = FileSystem.get( new URI( "hdfs://localhost:54310" ), configuration );
-     * hdfs.close();
-     * @return
      */
     private static final Logger log = LoggerFactory.getLogger(HdfsSinkTask.class);
     private FileSystem hdfs;
@@ -127,7 +115,7 @@ public class HdfsSinkTask extends SinkTask {
             e.printStackTrace();
             throw new ConfigException("bad hdfs uri");
         }
-
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
 
     }
@@ -187,11 +175,9 @@ public class HdfsSinkTask extends SinkTask {
                     if (offsetStart == -1 && offsetEnd == -1) {
                         log.error("offsetStart or offsetEnd is -1");
                     } else {
-                        try {
-                            writeToHdfs(topic, partitionNum, offsetStart, offsetEnd, objectMapper.writeValueAsBytes(list));
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                            log.error("objectmapper error");
+                        byte[] data = toBytes(list);
+                        if (data != null) {
+                            writeToHdfs(topic, partitionNum, offsetStart, offsetEnd, data);
                         }
                     }
 
@@ -203,6 +189,18 @@ public class HdfsSinkTask extends SinkTask {
 
     }
 
+    public byte[] toBytes(List<SinkRecord> list) {
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (SinkRecord sinkRecord : list) {
+            sb.append(sinkRecord.toString());
+            sb.append("\n");
+        }
+        return sb.toString().getBytes();
+    }
+
     public void writeToHdfs(String topic, int partition, double offsetStart, double offsetEnd, byte[] data) {
         String dir = this.hdfsUrl + this.topicsDir + "/" + topic + "/partition" + partition + "/";
         Path dirPath = new Path(dir);
@@ -212,6 +210,9 @@ public class HdfsSinkTask extends SinkTask {
                 log.info("create dir ? {}", createdDir);
             }
             Path file = new Path(dir + topic + "-" + offsetStart + "-" + offsetEnd + ".json");
+            if (this.hdfs.exists(file)) {
+                log.error("file {} already there", file.getName());
+            }
             OutputStream os = hdfs.create(file);
             os.write(data);
             os.flush();
@@ -244,11 +245,12 @@ public class HdfsSinkTask extends SinkTask {
             } else {
                 SinkRecord cur = iter.next();
                 if (first.topic() != cur.topic()) {
+                    log.info("they have different topics");
                     return false;
                 }
             }
         }
-        log.info("they all have the same topic");
+        //log.info("they all have the same topic");
         return true;
     }
 

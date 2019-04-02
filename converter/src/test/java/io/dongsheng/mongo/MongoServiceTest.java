@@ -1,6 +1,6 @@
 package io.dongsheng.mongo;
 
-import org.bson.Document;
+//import org.bson.Document;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MongoServiceTest {
-    private AtomicInteger num = new AtomicInteger(1);
+/*    private AtomicInteger num = new AtomicInteger(1);
     private Random rand = new Random();
 
     public String randomLetter(int num) {
@@ -125,4 +125,5 @@ public class MongoServiceTest {
         documents.add(doc1);
         documents.add(doc2);
     }
+    */
 }
