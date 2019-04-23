@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://enncloud-hadoop</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>file:/mnt/tmp1/tmp,file:/mnt/tmp2/tmp,file:/mnt/tmp3/tmp,file:/mnt/tmp4/tmp</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>ipcj-zookeeper1:2181,ipcj-zookeeper2:2181,ipcj-zookeeper3:2181</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.parent-znode </name>
+        <value>%s-hadoop-ha</value>
+    </property>
+</configuration>

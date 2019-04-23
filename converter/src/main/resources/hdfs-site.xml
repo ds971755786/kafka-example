@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>dfs.nameservices</name>
+        <value>enncloud-hadoop</value>
+    </property>
+    <property>
+        <name>dfs.ha.namenodes.enncloud-hadoop</name>
+        <value>nn1,nn2</value>
+    </property>
+    <property>
+        <name>dfs.ha.namenode.id</name>
+        <value>nn1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.enncloud-hadoop.nn1</name>
+        <value>%s-namenode1:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.enncloud-hadoop.nn2</name>
+        <value>%s-namenode2:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.enncloud-hadoop.nn1</name>
+        <value>%s-namenode1:50070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.enncloud-hadoop.nn2</name>
+        <value>%s-namenode2:50070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://%s-journalnode1:8485;%s-journalnode2:8485;%s-journalnode3:8485/enncloud-hadoop</value>
+    </property>
+    <property>
+        <name>dfs.client.failover.proxy.provider.enncloud-hadoop</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>shell(/bin/true)</value>
+    </property>
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/hdfs/journal</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>/hdfs/dfs/name</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/mnt/data1/data,file:/mnt/data2/data,file:/mnt/data3/data,file:/mnt/data4/data</value>
+    </property>
+    <property>
+        <name>dfs.webhdfs.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>true</value>
+    </property>
+    <property>
+        <!--datanode 允许失效的个数 （可改）-->
+        <name>dfs.datanode.failed.volumes.tolerated</name>
+        <value>1</value>
+    </property>
+    <property>
+        <!--hdfs 文件副本数（可改）-->
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <!--hdfs 文件block的大小（可改）-->
+        <name>dfs.blocksize</name>
+        <value>134217728</value>
+    </property>
+
+</configuration>

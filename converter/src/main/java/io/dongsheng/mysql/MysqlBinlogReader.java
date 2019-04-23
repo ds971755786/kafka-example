@@ -97,7 +97,8 @@ public class MysqlBinlogReader {
 
     public static void main(String[] args) {
         BinaryLogClient client = new BinaryLogClient("10.19.140.200", 29746, "root", "root");
-        client.setBinlogPosition(8927);
+        //client.setBinlogFilename("mysql-bin.000077");
+        //client.setBinlogPosition(8927);
         EventDeserializer eventDeserializer = new EventDeserializer();
         eventDeserializer.setCompatibilityMode(
                 EventDeserializer.CompatibilityMode.DATE_AND_TIME_AS_LONG,
