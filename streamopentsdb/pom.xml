@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.dongsheng.flink</groupId>
+    <artifactId>stream.opentsdb</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <hadoop.version>2.4.1</hadoop.version>
+        <!-- Need to use a user property here because the surefire
+             forkCount is not exposed as a property. With this we can set
+             it on the "mvn" commandline in travis. -->
+        <flink.forkCount>1C</flink.forkCount>
+        <!-- Allow overriding the fork behaviour for the expensive tests in flink-tests
+             to avoid process kills due to container limits on TravisCI -->
+        <flink.forkCountTestPackage>${flink.forkCount}</flink.forkCountTestPackage>
+        <flink.reuseForks>true</flink.reuseForks>
+        <log4j.configuration>log4j-test.properties</log4j.configuration>
+        <flink.shaded.version>6.0</flink.shaded.version>
+        <guava.version>18.0</guava.version>
+        <akka.version>2.5.21</akka.version>
+        <java.version>1.8</java.version>
+        <slf4j.version>1.7.15</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <!-- Overwrite default values from parent pom.
+             Intellij is (sometimes?) using those values to choose target language level
+             and thus is changing back to java 1.6 on each maven re-import -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <scala.macros.version>2.1.0</scala.macros.version>
+        <!-- Default scala versions, must be overwritten by build profiles, so we set something
+        invalid here -->
+        <scala.version>2.11.12</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
+        <chill.version>0.7.6</chill.version>
+        <zookeeper.version>3.4.10</zookeeper.version>
+        <curator.version>2.12.0</curator.version>
+        <jackson.version>2.7.9</jackson.version>
+        <metrics.version>3.1.5</metrics.version>
+        <prometheus.version>0.3.0</prometheus.version>
+        <avro.version>1.8.2</avro.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>2.21.0</mockito.version>
+        <powermock.version>2.0.0-RC.4</powermock.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <py4j.version>0.10.8.1</py4j.version>
+        <japicmp.skip>false</japicmp.skip>
+        <flink.convergence.phase>validate</flink.convergence.phase>
+        <!--
+            Keeping the MiniKDC version fixed instead of taking hadoop version dependency
+            to support testing Kafka, ZK etc., modules that does not have Hadoop dependency
+            Starting Hadoop 3, org.apache.kerby will be used instead of MiniKDC. We may have
+            to revisit the impact at that time.
+        -->
+        <minikdc.version>2.7.2</minikdc.version>
+        <generated.docs.dir>./docs/_includes/generated</generated.docs.dir>
+        <versions.ennew_monitor_framework>0.10.34.dev-SNAPSHOT</versions.ennew_monitor_framework>
+        <versions.ennew_monitor_streaming>0.10.25.dev-SNAPSHOT</versions.ennew_monitor_streaming>
+    </properties>
+    <repositories>
+        <repository>
+            <id>my-repo1</id>
+            <name>your custom repo</name>
+            <url>http://10.19.248.200:30080/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka_2.11</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>enn-monitor</groupId>
+            <artifactId>enn-monitor-framework-metrics-kubelet-proto</artifactId>
+            <version>${versions.ennew_monitor_framework}</version>
+        </dependency>
+        <dependency>
+            <groupId>enn-monitor</groupId>
+            <artifactId>enn-monitor-streaming-common</artifactId>
+            <version>${versions.ennew_monitor_streaming}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+
+
+</project>
