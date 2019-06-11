@@ -100,32 +100,39 @@ public class HdfsSinkTaskTest {
     }
 
     @Test
+    public void testArrayHashCode() {
+
+    }
+
+    @Test
     public void test() throws IOException {
-        String path = "/home/dongsheng/work/java_projects/kafka-example/kafka-connect/hdfs/test";
+        String path = "/home/dongsheng/work/java_projects/kafka-example/kafka-connect/good";
         File dir = new File(path);
 
         int notJson = 0;
         int missingRecords = 0;
         int not1024 = 0;
         int previous = 0;
-        List<String> l = new ArrayList<>(188);
+        Set<String> l = new TreeSet<>();
 
         ObjectMapper mapper = new ObjectMapper();
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             for (File f : files) {
+                previous = 0;
                 byte[] data = Files.readAllBytes(FileSystems.getDefault().getPath(f.getAbsolutePath()));
                 try {
                     List<Map<String, Object>> list = mapper.readValue(data, new My());
                     int c = 0;
-                    for (Map<String, Object> m : list) {
+                    for (int i = 0; i < list.size(); i++) {
+                        Map<String, Object> m = list.get(i);
                         c++;
-                        String t = (String) m.get("key");
-                        int key = Integer.decode(t);
+                        int key = (int) m.get("offset");
+
                         //if (previous != 0) {
-                            if (key - previous != 1) {
+                            if (key - previous != 1 && i != 0) {
                                 missingRecords++;
-                                System.out.printf("%d %d\n", previous, key);
+                                System.out.printf("%s %d %d\n", f.getName(), previous, key);
                             }
                             previous = key;
                         //
@@ -140,6 +147,7 @@ public class HdfsSinkTaskTest {
         }
 
         //Assert.assertEquals(0, notJson);
+        System.out.println(l.size());
         for (String a : l) {
             System.out.println(a);
         }
